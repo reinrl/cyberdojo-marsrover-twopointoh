@@ -48,7 +48,50 @@ MMRMMRMRRM
 ## Week Two:
 - Edit the rover code such that instead of falling off of the edge, it makes a 90 degree turn to the right, and attempt to do the move in that direction instead of the original orientation (this can be repeated until a valid move is uncovered).
 
+```js
+// sample test scenario:
+{
+    scenario: "boundsWithTurning",
+    input: ["5 5", "1 2 N", "MMMMMMMMM", "3 3 E", "MMRMMRMRRM"],
+    expectedOutput: ["5 3 S", "5 1 E"],
+}
+```
+
 - Edit the rover code such that the rovers take turns moving. The second rover to arrive at an occupied square would remain in its current location until the next turn. Attempt to retry the move up to 2 more times before skipping it and moving on to the next instruction.
+
+```js
+// sample test scenario:
+/* 
+Initial state:
+    Rover 1: (0, 5, S) with instructions "MMMM"
+    Rover 2: (0, 0, N) with instructions "MMRM"
+
+Turn-by-turn analysis:
+    Turn 1:
+        Rover 1: tries M (move south from (0,5) to (0,4)) - should succeed → (0, 4, S)
+        Rover 2: tries M (move north from (0,0) to (0,1)) - should succeed → (0, 1, N)
+    Turn 2:
+        Rover 1: tries M (move south from (0,4) to (0,3)) - should succeed → (0, 3, S)
+        Rover 2: tries M (move north from (0,1) to (0,2)) - should succeed → (0, 2, N)
+    Turn 3:
+        Rover 1: tries M (move south from (0,3) to (0,2)) - BLOCKED by Rover 2 at (0,2)
+        Rover 2: tries R (turn right) → (0, 2, E)
+    Turn 4:
+        Rover 1: tries M (move south from (0,3) to (0,2)) - still BLOCKED by Rover 2 at (0,2)
+        Rover 2: tries M (move east from (0,2) to (1,2)) - should succeed → (1, 2, E)
+    Turn 5:
+        Rover 1: tries M (move south from (0,3) to (0,2)) - should now succeed → (0, 2, S)
+        Rover 2: (already completed all instructions)
+    Turn 6:
+        Rover 1: tries M (move south from (0,2) to (0,1)) - should succeed → (0, 1, S)
+        Rover 2: (already completed all instructions)
+*/
+{
+    scenario: "collisionDetection",
+    input: ["5 5", "0 5 S", "MMMM", "0 0 N", "MMRM"],
+    expectedOutput: ["0 1 S", "1 2 E"],
+}
+```
 
 ## Week Three:
 - Each rover should keep track of every grid coordinate that it has explored, and then at the end of processing the provided instructions it should output both the final location/direction and a grid showing coordinates that were explored (use an underscore for unexplored, and an X for explored).
