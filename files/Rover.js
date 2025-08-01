@@ -23,39 +23,51 @@ class Rover {
   }
 
   #move(plateauWidth, plateauHeight) {
-    switch (this.direction) {
-      case "N":
-        if (this.y < plateauHeight) {
-          this.y += 1;
-        } else {
-          return "Ran out of gravity :{";
-        }
-        break;
-      case "E":
-        if (this.x < plateauWidth) {
-          this.x += 1;
-        } else {
-          return "Ran out of gravity :{";
-        }
-        break;
-      case "S":
-        if (this.y > 0) {
-          this.y -= 1;
-        } else {
-          return "Ran out of gravity :{";
-        }
-        break;
-      case "W":
-        if (this.x > 0) {
-          this.x -= 1;
-        } else {
-          return "Ran out of gravity :{";
-        }
-        break;
-      default:
-        return "ERROR: Invalid Direction";
+    let attempts = 0;
+
+    while (attempts < 4) {
+      let canMove = false;
+
+      switch (this.direction) {
+        case "N":
+          if (this.y < plateauHeight) {
+            this.y += 1;
+            canMove = true;
+          }
+          break;
+        case "E":
+          if (this.x < plateauWidth) {
+            this.x += 1;
+            canMove = true;
+          }
+          break;
+        case "S":
+          if (this.y > 0) {
+            this.y -= 1;
+            canMove = true;
+          }
+          break;
+        case "W":
+          if (this.x > 0) {
+            this.x -= 1;
+            canMove = true;
+          }
+          break;
+        default:
+          return "ERROR: Invalid Direction";
+      }
+
+      if (canMove) {
+        return null; // Successful move
+      }
+
+      // Turn right and try again
+      this.#turn("R");
+      attempts++;
     }
-    return null;
+
+    // If we've tried all 4 directions and none work
+    return "Ran out of gravity :{";
   }
 
   #getPosition() {
