@@ -22,71 +22,91 @@ class Rover {
     }
   }
 
-  #move(plateauWidth, plateauHeight) {
+  #move(plateauWidth, plateauHeight, occupiedPositions = new Set()) {
     let attempts = 0;
 
     while (attempts < 4) {
       let canMove = false;
+      let newX = this.x;
+      let newY = this.y;
+      let hitBoundary = false;
 
       switch (this.direction) {
         case "N":
           if (this.y < plateauHeight) {
-            this.y += 1;
+            newY = this.y + 1;
             canMove = true;
+          } else {
+            hitBoundary = true;
           }
           break;
         case "E":
           if (this.x < plateauWidth) {
-            this.x += 1;
+            newX = this.x + 1;
             canMove = true;
+          } else {
+            hitBoundary = true;
           }
           break;
         case "S":
           if (this.y > 0) {
-            this.y -= 1;
+            newY = this.y - 1;
             canMove = true;
+          } else {
+            hitBoundary = true;
           }
           break;
         case "W":
           if (this.x > 0) {
-            this.x -= 1;
+            newX = this.x - 1;
             canMove = true;
+          } else {
+            hitBoundary = true;
           }
           break;
         default:
           return "ERROR: Invalid Direction";
       }
 
-      if (canMove) {
+      // Check if the new position is occupied by another rover
+      const positionKey = `${newX},${newY}`;
+      if (canMove && !occupiedPositions.has(positionKey)) {
+        this.x = newX;
+        this.y = newY;
         return null; // Successful move
       }
 
-      // Turn right and try again
-      this.#turn("R");
-      attempts++;
+      // If we hit a boundary, turn right and try again
+      if (hitBoundary) {
+        this.#turn("R");
+        attempts++;
+      } else {
+        // If we hit another rover, return a collision error (don't turn)
+        return "collision";
+      }
     }
 
     // If we've tried all 4 directions and none work
     return "Ran out of gravity :{";
   }
 
-  #getPosition() {
+  getPosition() {
     return this.x + " " + this.y + " " + this.direction;
   }
 
-  handleInstructions(instructions, plateauWidth, plateauHeight) {
-    for (let instruction of instructions) {
-      if (instruction === "M") {
-        let error = this.#move(plateauWidth, plateauHeight);
-        if (error) {
-          return error;
-        }
-      } else {
-        this.#turn(instruction);
-      }
+  // Handle a single instruction with collision detection
+  handleSingleInstruction(
+    instruction,
+    plateauWidth,
+    plateauHeight,
+    occupiedPositions = new Set()
+  ) {
+    if (instruction === "M") {
+      return this.#move(plateauWidth, plateauHeight, occupiedPositions);
+    } else {
+      this.#turn(instruction);
+      return null;
     }
-
-    return this.#getPosition();
   }
 }
 
