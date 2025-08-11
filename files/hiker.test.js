@@ -9,9 +9,24 @@ const testCases = [
     expectedOutput: ["1 3 N", "5 1 E"],
   },
   {
-    scenario: "noGravity",
+    scenario: "boundsWithTurning",
     input: ["5 5", "1 2 N", "MMMMMMMMM", "3 3 E", "MMRMMRMRRM"],
-    expectedOutput: ["Ran out of gravity :{", "5 1 E"],
+    expectedOutput: ["5 3 S", "5 1 E"],
+  },
+  {
+    scenario: "southBoundaryHandling",
+    input: ["5 5", "2 0 S", "M"],
+    expectedOutput: ["1 0 W"],
+  },
+  {
+    scenario: "westBoundaryHandling", 
+    input: ["5 5", "0 2 W", "M"],
+    expectedOutput: ["0 3 N"],
+  },
+  {
+    scenario: "turnInstructions",
+    input: ["5 5", "2 2 N", "LR"],
+    expectedOutput: ["2 2 N"],
   },
 ];
 

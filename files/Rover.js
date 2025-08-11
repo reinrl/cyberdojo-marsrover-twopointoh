@@ -7,6 +7,13 @@ class Rover {
     this.x = parseInt(x);
     this.y = parseInt(y);
     this.direction = direction;
+    this.plateauHeight = 0;
+    this.plateauWidth = 0;
+  }
+
+  #setPlateau(plateauHeight, plateauWidth) {
+    this.plateauHeight = plateauHeight;
+    this.plateauWidth = plateauWidth;
   }
 
   #turn(instruction) {
@@ -22,34 +29,39 @@ class Rover {
     }
   }
 
-  #move(plateauWidth, plateauHeight) {
+  #handleEdge() {
+    this.#turn("R");
+    this.#move();
+  }
+
+  #move() {
     switch (this.direction) {
       case "N":
-        if (this.y < plateauHeight) {
+        if (this.y < this.plateauHeight) {
           this.y += 1;
         } else {
-          return "Ran out of gravity :{";
+          this.#handleEdge();
         }
         break;
       case "E":
-        if (this.x < plateauWidth) {
+        if (this.x < this.plateauWidth) {
           this.x += 1;
         } else {
-          return "Ran out of gravity :{";
+          this.#handleEdge();
         }
         break;
       case "S":
         if (this.y > 0) {
           this.y -= 1;
         } else {
-          return "Ran out of gravity :{";
+          this.#handleEdge();
         }
         break;
       case "W":
         if (this.x > 0) {
           this.x -= 1;
         } else {
-          return "Ran out of gravity :{";
+          this.#handleEdge();
         }
         break;
       default:
@@ -63,9 +75,11 @@ class Rover {
   }
 
   handleInstructions(instructions, plateauWidth, plateauHeight) {
+    this.#setPlateau(plateauHeight, plateauWidth);
+
     for (let instruction of instructions) {
       if (instruction === "M") {
-        let error = this.#move(plateauWidth, plateauHeight);
+        let error = this.#move();
         if (error) {
           return error;
         }
